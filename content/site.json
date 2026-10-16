@@ -1,0 +1,160 @@
+{
+  "meta": {
+    "title": "Conceiving Victory | Marcene Marcus, LCSW — CA therapy",
+    "description": "Online psychotherapy in California with Marcene Marcus, LCSW. Adults, couples, families, and clinical consultation for therapists. Email to inquire.",
+    "siteUrl": "https://conceivingvictory.com",
+    "ogTitle": "Conceiving Victory | Marcene Marcus, LCSW",
+    "ogDescription": "Private psychotherapy and clinical consultation in California. Online sessions by appointment. Email to inquire.",
+    "ogImage": "/assets/og.jpg",
+    "keywords": "California psychotherapy, online therapy California, Marcene Marcus LCSW, couples therapy, family therapy, clinical supervision California, telehealth therapist",
+    "email": "marcenesmarcus@gmail.com",
+    "emailSubject": "Appointment inquiry",
+    "instagramUrl": "https://www.instagram.com/conceivingvictory/",
+    "instagramHandle": "@conceivingvictory",
+    "areaServed": "California",
+    "founded": "2004"
+  },
+  "rail": {
+    "brand": "Conceiving Victory",
+    "meta": "California telehealth · By appointment · Est. 2004",
+    "cta": "Email to inquire",
+    "nav": [
+      { "href": "#vow", "index": "01", "label": "Vow" },
+      { "href": "#request", "index": "02", "label": "Request a time" },
+      { "href": "#marcene", "index": "03", "label": "Marcene" },
+      { "href": "#work", "index": "04", "label": "The work" },
+      { "href": "#fees", "index": "05", "label": "Fees" },
+      { "href": "#words", "index": "06", "label": "Words" }
+    ]
+  },
+  "vow": {
+    "eyebrow": "A private psychotherapy practice in California",
+    "title": "Conceiving Victory",
+    "lede": "Before we heal, it helps to believe we can. Hope is a noun and a verb. Reach for it, and you already have it.",
+    "continue": "Open the file. Request a time. Meet Marcene when you are ready."
+  },
+  "request": {
+    "kicker": "02",
+    "title": "Request a time",
+    "intro": "Email a short note about the session you need. We reply about fit, timing, and next steps. No subscriptions. You pay for the session you book.",
+    "details": [
+      { "label": "Hours", "value": "By appointment" },
+      { "label": "Area served", "value": "California (telehealth)" },
+      { "label": "For", "value": "Clients, couples, families, and clinicians seeking consultation or supervision" },
+      { "label": "Contact", "value": "email" }
+    ],
+    "cta": "Email to inquire",
+    "secondaryCta": "Read the fee schedule"
+  },
+  "marcene": {
+    "kicker": "03",
+    "title": "Marcene Marcus, LCSW",
+    "portraitAlt": "Marcene Marcus, LCSW",
+    "paragraphs": [
+      "Conceiving Victory, Inc. is owned and operated by Marcene Marcus, LCSW: psychotherapist, licensed clinical social worker, and clinical supervisor in California.",
+      "She trained at Columbia University, USC's Leonard Davis School, and the University of California, Santa Barbara. Her work pairs warmth and humor with evidence-based tools. Specialties include anxiety, depression, grief and loss, maternal mental health, and infertility.",
+      "We meet you where you are, from the comfort of your home."
+    ],
+    "highlightLast": true,
+    "facts": [
+      { "label": "Practice founded", "value": "2004" },
+      { "label": "License", "value": "LCSW, California" },
+      { "label": "Most sessions", "value": "Private video" },
+      { "label": "Workshops", "value": "In person by arrangement" }
+    ],
+    "videoUrl": "https://www.youtube-nocookie.com/embed/TpSmlk-OZxs",
+    "videoTitle": "Video introduction from Marcene Marcus, LCSW"
+  },
+  "work": {
+    "kicker": "04",
+    "title": "The work",
+    "intro": "A practice for children, adults, couples, and families in hard seasons. Also a place for psychotherapists to consult and receive clinical supervision.",
+    "items": [
+      { "label": "For clients", "text": "Online therapy for individuals, couples, and families." },
+      { "label": "For therapists", "text": "Online clinical consultation and clinical supervision." },
+      { "label": "For groups", "text": "Workshops-to-go: you bring the group, date, and topic." }
+    ],
+    "topicsTitle": "Workshop topics",
+    "topics": [
+      "Conflict resolution",
+      "Getting unstuck",
+      "Nurturing healthy connections",
+      "Communication",
+      "Stress management",
+      "Time management",
+      "Boundary setting",
+      "Assertiveness",
+      "Other life skills: budgeting, credit, healthy lifestyle"
+    ],
+    "topicsNote": "Custom topics welcome. Name what your group needs when you inquire.",
+    "quote": "A journey of a thousand miles begins with a single step.",
+    "quoteAttribution": "Tao Te Ching"
+  },
+  "fees": {
+    "kicker": "05",
+    "title": "Fee schedule",
+    "intro": "Choose the session that matches who will be in the room. Confirm payment details when you inquire.",
+    "caption": "Current session fees. Clinical supervision consult is free to ASWs and AMFTs.",
+    "sessions": [
+      {
+        "name": "Individual therapy or clinical consultation",
+        "duration": "50 minutes",
+        "price": 180,
+        "description": "A focused conversation to begin, return, or work through something specific."
+      },
+      {
+        "name": "Family session",
+        "duration": "75 minutes",
+        "price": 200,
+        "description": "The household in one room, with a trained family therapist guiding the conversation."
+      },
+      {
+        "name": "Couples session",
+        "duration": "75 minutes",
+        "price": 200,
+        "description": "Two people, one therapist, space to be heard by each other."
+      }
+    ],
+    "note": "Insurance, refunds, and workshop quotes are confirmed by email. There are no packages or site subscriptions.",
+    "cta": "Email to inquire"
+  },
+  "words": {
+    "kicker": "06",
+    "title": "Words from people who worked with Marcene",
+    "intro": "Names appear as provided for publication on this site.",
+    "reviews": [
+      {
+        "quote": "Marcene is an outstanding therapist: extremely gifted, compassionate, professional, and caring. She has made a tremendous difference in my life, and taught me much more than I anticipated.",
+        "name": "Kristen D.",
+        "role": "CEO"
+      },
+      {
+        "quote": "I consider myself extremely lucky to have encountered Marcene during a most difficult time. She is caring, illuminating, and always knew which direction to go.",
+        "name": "R.",
+        "role": "Journeyman"
+      },
+      {
+        "quote": "Marcene Marcus is a truly outstanding family and individual counselor. Knowledgeable, competent, and highly understanding. Her compassion is readily evident.",
+        "name": "Clark",
+        "role": "Pastor"
+      }
+    ]
+  },
+  "close": {
+    "title": "Welcome to yours",
+    "body": "Send a short note. We will reply about timing, fit, and next steps.",
+    "cta": "Email to inquire"
+  },
+  "footer": {
+    "brand": "Conceiving Victory, Inc.",
+    "blurb": "Online therapy when support needs to be soon and simple. Pace is mutual. Some clients come a few times. Others stay longer. Many return for a booster session when life asks for it.",
+    "exploreHeading": "Explore",
+    "reachHeading": "Reach us",
+    "locationLine": "California · By appointment",
+    "copyrightName": "Conceiving Victory, Inc."
+  },
+  "thumbBar": {
+    "cta": "Email to inquire",
+    "feesLink": "Fee schedule"
+  }
+}

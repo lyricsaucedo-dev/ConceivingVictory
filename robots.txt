@@ -1,0 +1,11 @@
+# https://conceivingvictory.com/robots.txt
+User-agent: *
+Allow: /
+
+# Do not index the content editor or OAuth helpers
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api
+Disallow: /api/
+
+Sitemap: https://conceivingvictory.com/sitemap.xml

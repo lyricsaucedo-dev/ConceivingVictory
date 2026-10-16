@@ -1,0 +1,7 @@
+{
+  "backend": {
+    "name": "github",
+    "repo": "voltrongmr/ConceivingVictory",
+    "branch": "main"
+  }
+}

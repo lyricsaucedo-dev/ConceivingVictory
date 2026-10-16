@@ -1,137 +1,373 @@
-/* ===========================================================
-   Conceiving Victory - Vanilla JS
-   =========================================================== */
+/* Load editable copy from content/site.json; HTML remains the offline fallback. */
+(function () {
+  const year = document.getElementById("year");
+  if (year) {
+    year.textContent = new Intl.DateTimeFormat("en-US", { year: "numeric" }).format(new Date());
+  }
 
-/* ---------- Data ---------- */
-const BOOKING_EMAIL = "marcenesmarcus@gmail.com";
+  function getPath(obj, path) {
+    return path.split(".").reduce((acc, key) => (acc == null ? undefined : acc[key]), obj);
+  }
 
-const SESSIONS = [
-  {
-    id: "individual",
-    name: "Individual Therapy OR Clinical Consultation",
-    duration: "50 minutes",
-    price: 180,
-    desc: "A one-off conversation. Perfect to dip your toes in or talk through something specific.",
-    features: ["Licensed therapist", "Private video room", "Session notes after"],
-    featured: true,
-    perMonth: false,
-    footnote: "Clinical Supervision consult — free to ASWs, AMFTs.",
-  },
-  {
-    id: "family",
-    name: "Family Session",
-    duration: "75 minutes",
-    price: 200,
-    desc: "The whole family in one room. Work through dynamics together with a trained family therapist.",
-    features: ["Family dynamics expertise", "Communication frameworks", "Action plan together"],
-    featured: false,
-    perMonth: false,
-  },
-  {
-    id: "couples",
-    name: "Couples Session",
-    duration: "75 minutes",
-    price: 200,
-    desc: "Two of you, one therapist, a shared space to actually be heard by each other.",
-    features: ["Both partners on call", "Communication frameworks", "Follow-up plan"],
-    featured: false,
-    perMonth: false,
-  },
-];
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
 
-const TESTIMONIALS = [
-  {
-    quote: "Marcene is an outstanding therapist -- extremely gifted, compassionate, professional, and caring. She has made a tremendous difference in my life, and taught me much, much more than I anticipated. I highly recommend her. She will absolutely deliver on what you are seeking.",
-    name: "Kristen D.", role: "CEO",
-  },
-  {
-    quote: "I consider myself extremely lucky to have encountered Marcene to guide me during a most difficult time. She is caring, illuminating and always knew exactly which direction to go. Yet, she was gentle enough to let me proceed as the way opened.",
-    name: "R.", role: "Journeyman",
-  },
-  {
-    quote: "Marcene Marcus is a truly outstanding family and individual counselor. She is knowledgeable, competent, and highly understanding. Her compassion is readily evident. Her 'getting to the heart of the matter' is quick and comprehensive. Highly recommend her to you.",
-    name: "Clark", role: "Pastor",
-  },
-];
+  function mailtoHref(email, subject) {
+    const q = subject ? `?subject=${encodeURIComponent(subject)}` : "";
+    return `mailto:${email}${q}`;
+  }
 
-function bookingMailto(sessionName) {
-  const subject = sessionName
-    ? `Inquiry: ${sessionName}`
-    : "Appointment inquiry";
-  return `mailto:${BOOKING_EMAIL}?subject=${encodeURIComponent(subject)}`;
-}
+  function applyMailtos(data) {
+    const email = data.meta && data.meta.email;
+    if (!email) return;
+    const subject = (data.meta && data.meta.emailSubject) || "Appointment inquiry";
+    document.querySelectorAll("[data-mailto]").forEach((el) => {
+      const isPlain = el.textContent && el.textContent.trim() === el.getAttribute("href")?.replace(/^mailto:/, "").split("?")[0];
+      if (el.tagName === "A") {
+        const wantsSubject = /subject=/i.test(el.getAttribute("href") || "") || el.classList.contains("btn");
+        el.setAttribute("href", wantsSubject ? mailtoHref(email, subject) : `mailto:${email}`);
+        if (isPlain || el.textContent.trim() === "marcenesmarcus@gmail.com" || /^[\w.+-]+@/.test(el.textContent.trim())) {
+          el.textContent = email;
+        }
+      }
+    });
+  }
 
-/* ---------- Render pricing ---------- */
-const pricingGrid = document.getElementById("pricing-grid");
-pricingGrid.innerHTML = SESSIONS.map(s => `
-  <article class="price-card ${s.featured ? "featured" : ""}">
-    ${s.featured ? '<span class="featured-badge">Most chosen</span>' : ''}
-    <h3>${s.name}</h3>
-    <p class="price-duration">${s.duration}</p>
-    <div class="price-amount">
-      <span class="num">$${s.price}</span>
-      <span class="per">${s.perMonth ? "/month" : ""}</span>
-    </div>
-    <p class="price-desc">${s.desc}</p>
-    <ul class="price-features">
-      ${s.features.map(f => `<li>${f}</li>`).join("")}
-    </ul>
-    <a class="btn ${s.featured ? "btn-accent" : "btn-primary"}" href="${bookingMailto(s.name)}">
-      Email to book
-    </a>
-    ${s.footnote ? `<p class="price-footnote${s.featured ? " price-footnote--on-dark" : ""}">${s.footnote}</p>` : ""}
-  </article>
-`).join("");
+  function applyInstagram(data) {
+    const url = data.meta && data.meta.instagramUrl;
+    const handle = data.meta && data.meta.instagramHandle;
+    document.querySelectorAll("[data-instagram]").forEach((el) => {
+      if (url) el.setAttribute("href", url);
+      if (handle) el.textContent = `Instagram ${handle}`;
+    });
+  }
 
-/* ---------- Render testimonials ---------- */
-const testiGrid = document.getElementById("testimonials-grid");
-testiGrid.innerHTML = TESTIMONIALS.map(t => `
-  <figure class="testi-card">
-    <span class="testi-quote">“</span>
-    <blockquote>${t.quote}</blockquote>
-    <figcaption>
-      <p class="testi-name">${t.name}</p>
-      <p class="testi-role">${t.role}</p>
-    </figcaption>
-  </figure>
-`).join("");
+  function applyText(data) {
+    document.querySelectorAll("[data-content]").forEach((el) => {
+      const value = getPath(data, el.getAttribute("data-content"));
+      if (value == null || typeof value === "object") return;
+      if (el.tagName === "BLOCKQUOTE") {
+        const text = String(value).replace(/^["“]|["”]$/g, "");
+        el.textContent = `“${text}”`;
+        return;
+      }
+      el.textContent = String(value);
+    });
 
-/* ---------- Year ---------- */
-document.getElementById("year").textContent = new Date().getFullYear();
+    document.querySelectorAll("[data-content-alt]").forEach((el) => {
+      const value = getPath(data, el.getAttribute("data-content-alt"));
+      if (value != null) el.setAttribute("alt", String(value));
+    });
 
-/* ---------- Steps Section ---------- */
-const STEPS_DATA = [
-  {
-    n: "01",
-    title: "Email to inquire",
-    body: "Send a short note about the session you need. We’ll reply to find a time that works for you.",
-    icon: `<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg>`,
-  },
-  {
-    n: "02",
-    title: "Meet over video",
-    body: "Join a private, secure video room from any device. No app downloads, no waiting rooms.",
-    icon: `<svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3z"/></svg>`,
-  },
-  {
-    n: "03",
-    title: "Talk it through",
-    body: "Share what's on your mind, in your heart and weighing down your spirit with a licensed psychotherapist who is honored to talk with you as often as you like.",
-    icon: `<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>`,
-  },
-];
+    document.querySelectorAll("[data-content-src]").forEach((el) => {
+      const value = getPath(data, el.getAttribute("data-content-src"));
+      if (value != null) el.setAttribute("src", String(value));
+    });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const grid = document.getElementById("steps-grid");
-  if (!grid) return;
-  grid.innerHTML = STEPS_DATA.map(
-    (s) => `
-    <article class="step-card">
-      <span class="step-number" aria-hidden="true">${s.n}</span>
-      <div class="step-icon">${s.icon}</div>
-      <h3 class="step-title">${s.title}</h3>
-      <p class="step-body">${s.body}</p>
-    </article>
-  `
-  ).join("");
-});
+    document.querySelectorAll("[data-content-title]").forEach((el) => {
+      const value = getPath(data, el.getAttribute("data-content-title"));
+      if (value != null) el.setAttribute("title", String(value));
+    });
+
+    if (data.meta) applySeo(data);
+  }
+
+  function setMeta(selector, attr, value) {
+    if (value == null || value === "") return;
+    const el = document.querySelector(selector);
+    if (el) el.setAttribute(attr, String(value));
+  }
+
+  function absoluteUrl(siteUrl, path) {
+    if (!path) return "";
+    if (/^https?:\/\//i.test(path)) return path;
+    const base = String(siteUrl || "").replace(/\/$/, "");
+    const rel = String(path).startsWith("/") ? path : `/${path}`;
+    return base ? `${base}${rel}` : rel;
+  }
+
+  function applySeo(data) {
+    const meta = data.meta || {};
+    const siteUrl = (meta.siteUrl || "https://conceivingvictory.com").replace(/\/$/, "");
+    const pageUrl = `${siteUrl}/`;
+    const title = meta.title || document.title;
+    const description = meta.description || "";
+    const ogTitle = meta.ogTitle || title;
+    const ogDescription = meta.ogDescription || description;
+    const ogImage = absoluteUrl(siteUrl, meta.ogImage || "/assets/og.jpg");
+
+    if (title) document.title = title;
+    setMeta('meta[name="description"]', "content", description);
+    setMeta('meta[name="keywords"]', "content", meta.keywords);
+    setMeta('link[rel="canonical"]', "href", pageUrl);
+    setMeta('link[rel="alternate"][hreflang="en-us"]', "href", pageUrl);
+    setMeta('link[rel="alternate"][hreflang="x-default"]', "href", pageUrl);
+
+    setMeta('meta[property="og:url"]', "content", pageUrl);
+    setMeta('meta[property="og:title"]', "content", ogTitle);
+    setMeta('meta[property="og:description"]', "content", ogDescription);
+    setMeta('meta[property="og:image"]', "content", ogImage);
+    setMeta('meta[property="og:site_name"]', "content", "Conceiving Victory");
+
+    setMeta('meta[name="twitter:title"]', "content", ogTitle);
+    setMeta('meta[name="twitter:description"]', "content", ogDescription);
+    setMeta('meta[name="twitter:image"]', "content", ogImage);
+
+    const ld = document.getElementById("structured-data");
+    if (!ld) return;
+
+    const sessions = (data.fees && data.fees.sessions) || [];
+    const offers = sessions.map((s) => ({
+      "@type": "Offer",
+      name: s.name,
+      description: s.duration ? `${s.duration} session` : undefined,
+      price: s.price != null ? String(s.price) : undefined,
+      priceCurrency: "USD",
+    }));
+
+    const graph = {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": `${siteUrl}/#website`,
+          url: pageUrl,
+          name: "Conceiving Victory",
+          description,
+          inLanguage: "en-US",
+          publisher: { "@id": `${siteUrl}/#practice` },
+        },
+        {
+          "@type": "WebPage",
+          "@id": `${siteUrl}/#webpage`,
+          url: pageUrl,
+          name: title,
+          isPartOf: { "@id": `${siteUrl}/#website` },
+          about: { "@id": `${siteUrl}/#practice` },
+          description,
+          inLanguage: "en-US",
+        },
+        {
+          "@type": ["ProfessionalService", "MedicalBusiness", "LocalBusiness"],
+          "@id": `${siteUrl}/#practice`,
+          name: "Conceiving Victory, Inc.",
+          alternateName: "Conceiving Victory",
+          description,
+          url: pageUrl,
+          email: meta.email,
+          image: ogImage,
+          logo: absoluteUrl(siteUrl, "/assets/logo-sm.png"),
+          areaServed: { "@type": "State", "name": meta.areaServed || "California" },
+          availableLanguage: ["English"],
+          currenciesAccepted: "USD",
+          priceRange: "$$",
+          foundingDate: meta.founded || "2004",
+          sameAs: meta.instagramUrl ? [meta.instagramUrl] : undefined,
+          founder: { "@id": `${siteUrl}/#marcene` },
+          employee: { "@id": `${siteUrl}/#marcene` },
+          contactPoint: {
+            "@type": "ContactPoint",
+            contactType: "appointments",
+            email: meta.email,
+            availableLanguage: ["English"],
+            areaServed: "US-CA",
+          },
+          openingHoursSpecification: {
+            "@type": "OpeningHoursSpecification",
+            description: "By appointment",
+          },
+          hasOfferCatalog: offers.length
+            ? {
+                "@type": "OfferCatalog",
+                name: "Session fees",
+                itemListElement: offers,
+              }
+            : undefined,
+        },
+        {
+          "@type": "Person",
+          "@id": `${siteUrl}/#marcene`,
+          name: "Marcene Marcus",
+          honorificSuffix: "LCSW",
+          jobTitle: "Licensed Clinical Social Worker",
+          worksFor: { "@id": `${siteUrl}/#practice` },
+          image: absoluteUrl(siteUrl, "/assets/therapist-marcene.jpg"),
+          url: `${siteUrl}/#marcene`,
+        },
+      ],
+    };
+
+    ld.textContent = JSON.stringify(graph);
+  }
+
+  function renderRailNav(items) {
+    const root = document.querySelector('[data-mount="rail.nav"]');
+    if (!root || !Array.isArray(items)) return;
+    root.innerHTML = items
+      .map(
+        (item) =>
+          `<a href="${escapeHtml(item.href)}"><span class="idx">${escapeHtml(item.index)}</span><span>${escapeHtml(item.label)}</span></a>`
+      )
+      .join("");
+  }
+
+  function renderRequestDetails(details, email) {
+    const root = document.querySelector('[data-mount="request.details"]');
+    if (!root || !Array.isArray(details)) return;
+    root.innerHTML = details
+      .map((item) => {
+        const value =
+          item.value === "email"
+            ? `<a data-mailto href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>`
+            : escapeHtml(item.value);
+        return `<div><dt>${escapeHtml(item.label)}</dt><dd>${value}</dd></div>`;
+      })
+      .join("");
+  }
+
+  function asStringList(items, preferredKeys) {
+    if (!Array.isArray(items)) return [];
+    return items
+      .map((item) => {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object") {
+          for (const key of preferredKeys || []) {
+            if (item[key]) return String(item[key]);
+          }
+          const first = Object.values(item)[0];
+          return first == null ? "" : String(first);
+        }
+        return "";
+      })
+      .filter(Boolean);
+  }
+
+  function renderParagraphs(paragraphs, highlightLast) {
+    const root = document.querySelector('[data-mount="marcene.paragraphs"]');
+    const list = asStringList(paragraphs, ["paragraph", "text"]);
+    if (!root || !list.length) return;
+    root.innerHTML = list
+      .map((text, i) => {
+        const last = highlightLast && i === list.length - 1;
+        return last ? `<p><strong>${escapeHtml(text)}</strong></p>` : `<p>${escapeHtml(text)}</p>`;
+      })
+      .join("");
+  }
+
+  function renderFacts(facts) {
+    const root = document.querySelector('[data-mount="marcene.facts"]');
+    if (!root || !Array.isArray(facts)) return;
+    root.innerHTML = facts
+      .map((f) => `<div><dt>${escapeHtml(f.label)}</dt><dd>${escapeHtml(f.value)}</dd></div>`)
+      .join("");
+  }
+
+  function renderWorkItems(items) {
+    const root = document.querySelector('[data-mount="work.items"]');
+    if (!root || !Array.isArray(items)) return;
+    root.innerHTML = items
+      .map(
+        (item) =>
+          `<li><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.text)}</span></li>`
+      )
+      .join("");
+  }
+
+  function renderTopics(topics) {
+    const root = document.querySelector('[data-mount="work.topics"]');
+    const list = asStringList(topics, ["topic", "text", "label"]);
+    if (!root || !list.length) return;
+    root.innerHTML = list.map((t) => `<li>${escapeHtml(t)}</li>`).join("");
+  }
+
+  function renderFees(sessions) {
+    const root = document.querySelector('[data-mount="fees.sessions"]');
+    if (!root || !Array.isArray(sessions)) return;
+    root.innerHTML = sessions
+      .map((s) => {
+        const price = typeof s.price === "number" ? `$${s.price}` : escapeHtml(s.price);
+        return `<tr>
+          <th scope="row" class="name">${escapeHtml(s.name)}</th>
+          <td>${escapeHtml(s.duration)}</td>
+          <td>${price}</td>
+        </tr>`;
+      })
+      .join("");
+  }
+
+  function renderReviews(reviews) {
+    const root = document.querySelector('[data-mount="words.reviews"]');
+    if (!root || !Array.isArray(reviews) || !reviews.length) return;
+    const [featured, ...rest] = reviews;
+    const featureHtml = `<figure class="words-feature">
+      <blockquote>“${escapeHtml(featured.quote)}”</blockquote>
+      <figcaption><span class="who">${escapeHtml(featured.name)}</span> · ${escapeHtml(featured.role)}</figcaption>
+    </figure>`;
+    const moreHtml = rest.length
+      ? `<div class="words-more">${rest
+          .map(
+            (r) => `<figure>
+          <blockquote>“${escapeHtml(r.quote)}”</blockquote>
+          <figcaption><span class="who">${escapeHtml(r.name)}</span> · ${escapeHtml(r.role)}</figcaption>
+        </figure>`
+          )
+          .join("")}</div>`
+      : "";
+    root.innerHTML = featureHtml + moreHtml;
+  }
+
+  function applyContent(data) {
+    applyText(data);
+    renderRailNav(data.rail && data.rail.nav);
+    renderRequestDetails(data.request && data.request.details, data.meta && data.meta.email);
+    renderParagraphs(data.marcene && data.marcene.paragraphs, data.marcene && data.marcene.highlightLast);
+    renderFacts(data.marcene && data.marcene.facts);
+    renderWorkItems(data.work && data.work.items);
+    renderTopics(data.work && data.work.topics);
+    renderFees(data.fees && data.fees.sessions);
+    renderReviews(data.words && data.words.reviews);
+    applyMailtos(data);
+    applyInstagram(data);
+    setupRailObserver();
+  }
+
+  function setupRailObserver() {
+    const links = Array.from(document.querySelectorAll(".rail-nav a[href^='#']"));
+    const sections = links
+      .map((link) => document.querySelector(link.getAttribute("href")))
+      .filter(Boolean);
+
+    if (!links.length || !sections.length || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const id = "#" + entry.target.id;
+          links.forEach((link) => {
+            if (link.getAttribute("href") === id) link.setAttribute("aria-current", "true");
+            else link.removeAttribute("aria-current");
+          });
+        });
+      },
+      { rootMargin: "-35% 0px -55% 0px", threshold: 0 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  }
+
+  fetch("content/site.json", { cache: "no-cache" })
+    .then((res) => {
+      if (!res.ok) throw new Error("content unavailable");
+      return res.json();
+    })
+    .then(applyContent)
+    .catch(() => {
+      setupRailObserver();
+    });
+})();

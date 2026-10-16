@@ -1,0 +1,181 @@
+# Field schema for content/site.json
+# Repo / branch live in admin/settings.json (set OWNER/conceiving-victory before go-live).
+
+backend:
+  name: github
+  repo: voltrongmr/ConceivingVictory
+  branch: main
+
+publish_mode: simple
+media_folder: assets
+public_folder: /assets
+
+collections:
+  - name: site
+    label: Site text
+    files:
+      - label: All page copy
+        name: site
+        file: content/site.json
+        fields:
+          - label: Site settings & SEO
+            name: meta
+            widget: object
+            fields:
+              - { label: Browser tab title, name: title, widget: string, hint: "Shown in Google results; keep under ~60 characters" }
+              - { label: Search description, name: description, widget: text, hint: "Google snippet; keep under ~155 characters" }
+              - { label: Site URL, name: siteUrl, widget: string, hint: "https://conceivingvictory.com (no trailing slash)" }
+              - { label: Social share title, name: ogTitle, widget: string }
+              - { label: Social share description, name: ogDescription, widget: text }
+              - { label: Social share image path, name: ogImage, widget: string, hint: "/assets/og.jpg" }
+              - { label: Keywords, name: keywords, widget: text, hint: "Comma-separated phrases people might search" }
+              - { label: Booking email, name: email, widget: string }
+              - { label: Email subject line, name: emailSubject, widget: string }
+              - { label: Instagram URL, name: instagramUrl, widget: string }
+              - { label: Instagram handle, name: instagramHandle, widget: string }
+              - { label: Area served, name: areaServed, widget: string }
+              - { label: Year founded, name: founded, widget: string }
+
+          - label: Side menu
+            name: rail
+            widget: object
+            fields:
+              - { label: Brand name, name: brand, widget: string }
+              - { label: Side note, name: meta, widget: string }
+              - { label: Button label, name: cta, widget: string }
+              - label: Menu links
+                name: nav
+                widget: list
+                fields:
+                  - { label: Link target, name: href, widget: string, hint: "Example: #fees" }
+                  - { label: Number, name: index, widget: string }
+                  - { label: Label, name: label, widget: string }
+
+          - label: Opening vow
+            name: vow
+            widget: object
+            fields:
+              - { label: Small label, name: eyebrow, widget: string }
+              - { label: Main title, name: title, widget: string }
+              - { label: Lead sentence, name: lede, widget: text }
+              - { label: Continue line, name: continue, widget: string }
+
+          - label: Request a time
+            name: request
+            widget: object
+            fields:
+              - { label: Chapter number, name: kicker, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Intro, name: intro, widget: text }
+              - { label: Primary button, name: cta, widget: string }
+              - { label: Secondary link, name: secondaryCta, widget: string }
+              - label: Detail rows
+                name: details
+                widget: list
+                fields:
+                  - { label: Label, name: label, widget: string }
+                  - { label: Value, name: value, widget: string, hint: "Use the word email to show the booking address" }
+
+          - label: About Marcene
+            name: marcene
+            widget: object
+            fields:
+              - { label: Chapter number, name: kicker, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Photo alt text, name: portraitAlt, widget: string }
+              - label: Paragraphs
+                name: paragraphs
+                widget: list
+                field: { label: Paragraph, name: paragraph, widget: text }
+              - { label: Bold the last paragraph, name: highlightLast, widget: boolean, default: true }
+              - label: Fact rows
+                name: facts
+                widget: list
+                fields:
+                  - { label: Label, name: label, widget: string }
+                  - { label: Value, name: value, widget: string }
+              - { label: YouTube embed URL, name: videoUrl, widget: string }
+              - { label: Video title, name: videoTitle, widget: string }
+
+          - label: The work
+            name: work
+            widget: object
+            fields:
+              - { label: Chapter number, name: kicker, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Intro, name: intro, widget: text }
+              - label: Service rows
+                name: items
+                widget: list
+                fields:
+                  - { label: Label, name: label, widget: string }
+                  - { label: Description, name: text, widget: string }
+              - { label: Topics heading, name: topicsTitle, widget: string }
+              - label: Workshop topics
+                name: topics
+                widget: list
+                field: { label: Topic, name: topic, widget: string }
+              - { label: Topics note, name: topicsNote, widget: text }
+              - { label: Quote, name: quote, widget: text }
+              - { label: Quote attribution, name: quoteAttribution, widget: string }
+
+          - label: Fees
+            name: fees
+            widget: object
+            fields:
+              - { label: Chapter number, name: kicker, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Intro, name: intro, widget: text }
+              - { label: Table caption, name: caption, widget: text }
+              - label: Sessions
+                name: sessions
+                widget: list
+                fields:
+                  - { label: Session name, name: name, widget: string }
+                  - { label: Length, name: duration, widget: string }
+                  - { label: Fee (number), name: price, widget: number, value_type: int }
+                  - { label: Description (optional), name: description, widget: text, required: false }
+              - { label: Note under table, name: note, widget: text }
+              - { label: Button label, name: cta, widget: string }
+
+          - label: Reviews
+            name: words
+            widget: object
+            fields:
+              - { label: Chapter number, name: kicker, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Intro, name: intro, widget: text }
+              - label: Reviews
+                name: reviews
+                widget: list
+                summary: "{{fields.name}} — {{fields.role}}"
+                fields:
+                  - { label: Quote, name: quote, widget: text }
+                  - { label: Name, name: name, widget: string }
+                  - { label: Role, name: role, widget: string }
+
+          - label: Closing band
+            name: close
+            widget: object
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Body, name: body, widget: text }
+              - { label: Button label, name: cta, widget: string }
+
+          - label: Footer
+            name: footer
+            widget: object
+            fields:
+              - { label: Brand line, name: brand, widget: string }
+              - { label: Blurb, name: blurb, widget: text }
+              - { label: Explore heading, name: exploreHeading, widget: string }
+              - { label: Reach heading, name: reachHeading, widget: string }
+              - { label: Location line, name: locationLine, widget: string }
+              - { label: Copyright name, name: copyrightName, widget: string }
+
+          - label: Mobile bottom bar
+            name: thumbBar
+            widget: object
+            fields:
+              - { label: Primary button, name: cta, widget: string }
+              - { label: Fees link, name: feesLink, widget: string }

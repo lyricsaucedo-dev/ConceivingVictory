@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Edit site text | Conceiving Victory</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "Segoe UI", Candara, sans-serif;
+      background: #f4f5f8;
+      color: #1b2233;
+    }
+    .boot {
+      max-width: 36rem;
+      margin: 4rem auto;
+      padding: 0 1.25rem;
+      line-height: 1.5;
+    }
+    .boot code {
+      background: #e7e9ef;
+      padding: 0.1em 0.35em;
+      border-radius: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="boot" id="boot-msg">
+    <p>Loading the content editor…</p>
+    <p>If this stays blank, open the browser console and confirm <code>admin/settings.json</code> has your GitHub repo set.</p>
+  </div>
+
+  <script>
+    window.CMS_MANUAL_INIT = true;
+  </script>
+  <script src="https://unpkg.com/decap-cms@^3.3.3/dist/decap-cms.js"></script>
+  <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <script>
+    (async function boot() {
+      const bootMsg = document.getElementById("boot-msg");
+      try {
+        const [yamlText, settings] = await Promise.all([
+          fetch("config.yml", { cache: "no-cache" }).then((r) => {
+            if (!r.ok) throw new Error("Could not load config.yml");
+            return r.text();
+          }),
+          fetch("settings.json", { cache: "no-cache" }).then((r) => {
+            if (!r.ok) throw new Error("Could not load settings.json");
+            return r.json();
+          }),
+        ]);
+
+        const config = jsyaml.load(yamlText);
+        const backendSettings = settings.backend || {};
+        config.backend = Object.assign({}, config.backend, backendSettings, {
+          base_url: window.location.origin,
+          auth_endpoint: "api/auth",
+        });
+
+        if (!config.backend.repo || /OWNER\//i.test(config.backend.repo)) {
+          bootMsg.innerHTML =
+            "<p><strong>Setup needed.</strong></p>" +
+            "<p>Edit <code>admin/settings.json</code> and set <code>backend.repo</code> to your GitHub repository " +
+            "(example: <code>your-user/conceiving-victory</code>), then redeploy.</p>" +
+            "<p>Also add the GitHub OAuth app credentials to Vercel as described in the README.</p>";
+          return;
+        }
+
+        bootMsg.remove();
+        window.CMS.init({ config: config });
+      } catch (err) {
+        console.error(err);
+        bootMsg.innerHTML =
+          "<p><strong>Could not start the editor.</strong></p>" +
+          "<p>" +
+          String(err && err.message ? err.message : err) +
+          "</p>";
+      }
+    })();
+  </script>
+</body>
+</html>
